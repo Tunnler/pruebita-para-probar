@@ -7,7 +7,7 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import TableSortLabel from '@mui/material/TableSortLabel';
-import { TableFooter, TablePagination, TextField } from '@mui/material';
+import {TextField } from '@mui/material';
 import axios from 'axios';
 
 interface RankedStats {
@@ -31,8 +31,6 @@ const SummonerStats: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [order, setOrder] = useState<'asc' | 'desc'>('asc');
   const [orderBy, setOrderBy] = useState<string>('summonerName');
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
   const [searchQuery, setSearchQuery] = useState<string>('');
 
   useEffect(() => {
@@ -56,18 +54,8 @@ const SummonerStats: React.FC = () => {
     setOrderBy(property);
   };
 
-  const handleChangePage = (event: unknown, newPage: number) => {
-    setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
-
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(event.target.value);
-    setPage(0);
   };
 
   const sortComparator = (a: PlayerStats, b: PlayerStats) => {
@@ -97,7 +85,6 @@ const SummonerStats: React.FC = () => {
   const filteredPlayersStats = playersStats
     .filter(player => player.summonerName.toLowerCase().includes(searchQuery.toLowerCase()))
     .sort(sortComparator)
-    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 
   if (loading) {
     return <div>Loading...</div>;
@@ -205,18 +192,6 @@ const SummonerStats: React.FC = () => {
               </TableRow>
             ))}
           </TableBody>
-          <TableFooter>
-            <TableRow>
-              <TablePagination
-                rowsPerPageOptions={[5, 10, 25]}
-                count={playersStats.length}
-                rowsPerPage={rowsPerPage}
-                page={page}
-                onPageChange={handleChangePage}
-                onRowsPerPageChange={handleChangeRowsPerPage}
-              />
-            </TableRow>
-          </TableFooter>
         </Table>
       </TableContainer>
     </div>
